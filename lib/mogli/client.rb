@@ -4,6 +4,7 @@ require "mogli/client/user"
 module Mogli
   class Client
     attr_reader :access_token
+    attr_reader :api_version
     attr_reader :default_params
     attr_reader :expiration
 
@@ -25,7 +26,7 @@ module Mogli
     class HTTPException < ClientException; end
 
     def api_path(path)
-      "https://graph.facebook.com/#{path}"
+      "https://graph.facebook.com/v#{api_version}/#{path}"
     end
 
     def fql_path
@@ -36,8 +37,9 @@ module Mogli
       "https://api.facebook.com/method/fql.multiquery"
     end
 
-    def initialize(access_token = nil,expiration=nil)
+    def initialize(access_token = nil,expiration=nil,api_version='2.0')
       @access_token = access_token
+      @api_version = api_version
       # nil expiration means extended access
       expiration = Time.now.to_i + 10*365*24*60*60 if expiration.nil? or expiration == 0
       @expiration = Time.at(expiration)
@@ -90,7 +92,7 @@ module Mogli
     end
 
     def self.create_from_session_key(session_key, client_id, secret)
-      authenticator = Mogli::Authenticator.new(client_id, secret, nil)
+      authenticator = Mogli::Authenticator.new(client_id, secret, nil, @api_version)
       access_data = authenticator.get_access_token_for_session_key(session_key)
       new(access_token_from_access_data(access_data),expiration_from_access_data(access_data))
     end

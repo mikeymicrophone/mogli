@@ -19,7 +19,7 @@ module Mogli
 
     # Facebook's defaults image url, which seems to be the same as square_image_url at this time
     def image_url
-      "https://graph.facebook.com/#{id}/picture"
+      "https://graph.facebook.com/v#{client.api_version}/#{id}/picture"
     end
 
     # 50x50 pixel image url

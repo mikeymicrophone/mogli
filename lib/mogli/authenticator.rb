@@ -3,25 +3,26 @@ require 'mogli/client'
 
 module Mogli
   class Authenticator
-    attr_reader :client_id, :secret, :callback_url
+    attr_reader :client_id, :secret, :callback_url, :api_version
 
-    def initialize(client_id,secret,callback_url)
+    def initialize(client_id,secret,callback_url,api_version='2.0')
       @client_id = client_id
       @secret = secret
       @callback_url = callback_url
+      @api_version = api_version
     end
 
     def authorize_url(options = {})
       options_part = "&" + options.map {|k,v| "#{k}=#{v.kind_of?(Array) ? v.join(',') : v}" }.join('&') unless options.empty?
-      "https://graph.facebook.com/oauth/authorize?client_id=#{client_id}&redirect_uri=#{CGI.escape(callback_url)}#{options_part}"
+      "https://graph.facebook.com/v#{api_version}/oauth/authorize?client_id=#{client_id}&redirect_uri=#{CGI.escape(callback_url)}#{options_part}"
     end
 
     def access_token_url(code)
-      "https://graph.facebook.com/oauth/access_token?client_id=#{client_id}&redirect_uri=#{CGI.escape(callback_url) unless callback_url.nil? || callback_url.empty?}&client_secret=#{secret}&code=#{CGI.escape(code)}"
+      "https://graph.facebook.com/v#{api_version}/oauth/access_token?client_id=#{client_id}&redirect_uri=#{CGI.escape(callback_url) unless callback_url.nil? || callback_url.empty?}&client_secret=#{secret}&code=#{CGI.escape(code)}"
     end
 
     def extend_access_token(oauth_token)
-      response = Mogli::Client.get("https://graph.facebook.com/oauth/access_token",
+      response = Mogli::Client.get("https://graph.facebook.com/v#{api_version}/oauth/access_token",
         :query=>{
           :client_id=>@client_id,
           :client_secret => @secret,

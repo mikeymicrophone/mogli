@@ -11,7 +11,7 @@ module Mogli
     end
     
     def subscription_url
-      "https://graph.facebook.com/#{application_id}/subscriptions"
+      "https://graph.facebook.com/v#{api_version}/#{application_id}/subscriptions"
     end
     
     def subscribe_to_model(model,options)
