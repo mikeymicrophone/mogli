@@ -24,6 +24,7 @@ module Mogli
 
     has_association :activities, "Activity"
     has_association :friends, "User"
+    has_association :taggable_friends, "User"
     has_association :interests, "Interest"
     has_association :music, "Music"
     has_association :books, "Book"
